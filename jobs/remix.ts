@@ -1,4 +1,4 @@
-import { eventTrigger } from "@trigger.dev/sdk";
+import { eventTrigger, isTriggerError } from "@trigger.dev/sdk";
 import { client, openai } from "@/trigger";
 import { z } from "zod";
 import { load } from "cheerio";
@@ -20,7 +20,7 @@ client.defineJob({
     schema: z.object({
       url: z.string().url(),
       voice: z.string().optional(),
-    }) as any,
+    }),
   }),
   integrations: {
     openai,
@@ -41,7 +41,7 @@ client.defineJob({
           body: JSON.stringify({ url }),
         });
 
-        if (res.status > 200) throw new Error(res.statusText);
+        if (!res.ok) throw new Error(res.statusText);
 
         const fileUrl = await res.text();
 
@@ -105,7 +105,7 @@ Return the new copy directly, without formatting nor prose.
       });
 
       // Call the OpenAI API to generate new headings
-      const openaiResponse = await io.openai.createChatCompletion(
+      const openaiResponse = await io.openai.chat.completions.create(
         "openai-completions-api",
         {
           model: "gpt-4-1106-preview",
@@ -149,7 +149,7 @@ Return the new copy directly, without formatting nor prose.
           }),
         });
 
-        if (res.status > 200) throw new Error(res.statusText);
+        if (!res.ok) throw new Error(res.statusText);
 
         const fileUrl = await res.text();
 
@@ -164,6 +164,7 @@ Return the new copy directly, without formatting nor prose.
 
       return;
     } catch (error: any) {
+      if (isTriggerError(error)) throw error;
       io.logger.error("Failed to remix page", { error });
 
       throw new Error(error.message || "Failed to remix page");
