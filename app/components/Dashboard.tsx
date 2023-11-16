@@ -20,6 +20,7 @@ import {
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
+import { set } from "zod";
 
 type Props = {
   url?: string;
@@ -29,22 +30,19 @@ type Props = {
 function Dashboard({ url, voice }: Props) {
   const router = useRouter();
 
+  const [progress, setProgress] = useState(0);
   const [pageUrl, setPageUrl] = useState(url || "");
   const [eventId, setEventId] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [selectedVoice, setSelectedVoice] = useState<Voice>(voice || "pirate");
-  const [progress, setProgress] = useState(0);
-  const [messages, setMessages] = useState<Message[]>([]);
 
   const { statuses, run } = useEventRunStatuses(eventId);
 
   const validUrl = useMemo(() => validateUrl(pageUrl), [pageUrl]);
 
-  const screenshotUrl = useMemo<string>(
-    () => statuses?.find(({ key }) => key == "screenshot")?.data?.url as string,
-    [statuses]
-  );
+  const screenshotUrl = statuses?.find(({ key }) => key == "screenshot")?.data
+    ?.url as string | undefined;
 
   // Allow screenshot URL to be passed from search params
   const remixedUrl = useMemo<string>(() => {
@@ -59,23 +57,18 @@ function Dashboard({ url, voice }: Props) {
           voice ? voices[voice].value : "index"
         }.jpeg`;
         const fileUrl = `${process.env.NEXT_PUBLIC_BUCKET_URL}/${fileName}`;
-
-        setProgress(1);
-
         return fileUrl;
       }
     }
 
-    return statuses?.find(({ key }) => key == "remix")?.data?.url as string;
+    const remixedUrl = statuses?.find(({ key }) => key == "remix")?.data
+      ?.url as string;
+
+    return remixedUrl;
   }, [statuses, voice, url]);
 
   const submit = useCallback(async () => {
     if (!validUrl) return;
-
-    setMessages((curr) => [
-      ...curr,
-      { body: "Reaching Trigger.dev", status: "info", id: "init" },
-    ]);
 
     // Reset state
     const url = new URL(window.location.href);
@@ -86,7 +79,6 @@ function Dashboard({ url, voice }: Props) {
     setEventId("");
     setLoading(true);
     setSubmitted(true);
-    setProgress(0);
 
     const res = await callTrigger({
       url: validUrl,
@@ -97,52 +89,37 @@ function Dashboard({ url, voice }: Props) {
     setEventId(res.id);
   }, [validUrl, selectedVoice, router]);
 
-  useEffect(() => {
-    if (run?.status === "FAILURE") {
-      setMessages((curr) => {
-        return [
-          ...curr,
-          {
-            body: run.output.message || "Something went wrong",
-            status: "error",
-            id: run.id,
-          },
-        ];
-      });
-      setLoading(false);
-    } else if (run?.status === "SUCCESS") {
-      setMessages([]);
-      toast.success("Check out your new copy!");
-      setProgress(1);
-      setLoading(false);
-    }
-  }, [run]);
-
-  useEffect(() => {
-    if (statuses?.length == 0) {
-      setMessages((curr) => [...curr.filter(({ id }) => id != "init")]);
-    }
-
-    statuses?.map((status) => {
-      if (status.history.length === 0) {
-        setMessages((curr) => [
-          ...curr,
-          { body: status.label, status: "info", id: status.key },
-        ]);
-      } else {
-        setMessages((curr) => [
-          ...curr.filter((message) => message.id !== status.key),
-          { body: status.label, status: "success", id: status.key },
-        ]);
-      }
-    });
-  }, [statuses]);
+  const messages =
+    statuses?.flatMap((status) => ({
+      key: status.key,
+      label: status.label,
+      state: status.state,
+    })) ?? [];
 
   const copyLink = useCallback(() => {
     copyToClipboard(`${window.location.origin}/${pageUrl}/${selectedVoice}`);
 
     toast.success("Copied to clipboard");
   }, [pageUrl, selectedVoice]);
+
+  const runInProgress = run?.status !== "SUCCESS" && run?.status !== "FAILURE";
+
+  useEffect(() => {
+    switch (run?.status) {
+      case "FAILURE":
+        setProgress(1);
+        setLoading(false);
+        break;
+      case "SUCCESS":
+        setProgress(1);
+        setLoading(false);
+        break;
+      case "STARTED":
+        setProgress(0);
+        setLoading(true);
+        break;
+    }
+  }, [run?.status]);
 
   return (
     <form
@@ -193,35 +170,38 @@ function Dashboard({ url, voice }: Props) {
           submitted ? "border-2 border-midnight-800" : "border-dashed-wide"
         )}
       >
-        {messages.length > 0 ? (
-          <div className="absolute border-midnight-800/80 border z-50 flex items-start gap-3 p-6 flex-col justify-start shadow-xl top-[25%] left-[50%] translate-x-[-50%] h-56 w-96 bg-midnight-950/90 rounded-lg">
-            {messages.map(({ body, status, id }) => (
-              <motion.div
-                key={id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-                className={cn(
-                  "flex items-center gap-2",
-                  status == "error"
-                    ? "text-red-500"
-                    : status == "success"
-                    ? "text-green-500"
-                    : "text-dimmed"
-                )}
-              >
-                {status == "error" ? (
-                  <Cross1Icon className="w-5 h-5" />
-                ) : status == "success" ? (
-                  <CheckIcon className="w-5 h-5" />
-                ) : (
-                  <ReloadIcon className="w-5 h-5 animate-spin" />
-                )}
-                <span>{body}</span>
-              </motion.div>
-            ))}
+        {messages.length > 0 && runInProgress ? (
+          <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center">
+            <div className="border-midnight-800/80 border z-50 flex items-start gap-3 p-6 flex-col justify-start shadow-xl w-96 bg-midnight-950/90 rounded-lg">
+              {messages.map(({ key, state, label }) => (
+                <motion.div
+                  key={key}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5 }}
+                  className={cn(
+                    "flex items-center gap-2",
+                    state == "failure"
+                      ? "text-red-500"
+                      : state == "success"
+                      ? "text-green-500"
+                      : "text-dimmed"
+                  )}
+                >
+                  {state == "failure" ? (
+                    <Cross1Icon className="w-5 h-5" />
+                  ) : state == "success" ? (
+                    <CheckIcon className="w-5 h-5" />
+                  ) : (
+                    <ReloadIcon className="w-5 h-5 animate-spin" />
+                  )}
+                  <span>{label}</span>
+                </motion.div>
+              ))}
+            </div>
           </div>
         ) : null}
+
         <div
           className={cn(
             "h-10 rounded-t-lg w-full flex items-center justify-between px-4",

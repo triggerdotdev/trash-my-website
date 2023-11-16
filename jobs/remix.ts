@@ -30,7 +30,7 @@ client.defineJob({
 
     try {
       const initialScreenshotStatus = await io.createStatus("screenshot", {
-        label: "Waiting for Cloudflare",
+        label: "Fetching website",
         state: "loading",
       });
 
@@ -46,7 +46,7 @@ client.defineJob({
         const fileUrl = await res.text();
 
         initialScreenshotStatus.update("screenshotted", {
-          label: "Initial screenshot",
+          label: "Grabbed website",
           state: "success",
           data: {
             url: fileUrl,
@@ -55,7 +55,7 @@ client.defineJob({
       });
 
       const fetchHeadingsStatus = await io.createStatus("headings", {
-        label: "Fetching headings with Trigger",
+        label: "Extracting text",
         state: "loading",
       });
 
@@ -84,7 +84,7 @@ client.defineJob({
       headings = headings.slice(0, MAX_HEADING_COUNT);
 
       fetchHeadingsStatus.update("headings-fetched", {
-        label: "Fetched headings",
+        label: "Extracted text",
         state: "success",
       });
 
@@ -100,7 +100,7 @@ Return the new copy directly, without formatting nor prose.
       const prompt = `${prefix.trim()}\n\nHeadings:\n${headings.join("\n")}`;
 
       const aiStatus = await io.createStatus("new-headings", {
-        label: "Waiting for OpenAI",
+        label: "Trashing text",
         state: "loading",
       });
 
@@ -129,14 +129,14 @@ Return the new copy directly, without formatting nor prose.
           text,
         }));
 
-      const finalScreenshotStatus = await io.createStatus("remix", {
-        label: "Remixing page",
-        state: "loading",
+      aiStatus.update("new-headings-complete", {
+        label: "Trashed text",
+        state: "success",
       });
 
-      aiStatus.update("new-headings-complete", {
-        label: "Generated new headings with OpenAI",
-        state: "success",
+      const finalScreenshotStatus = await io.createStatus("remix", {
+        label: "Preparing trashy image",
+        state: "loading",
       });
 
       await io.runTask("new-screenshot", async () => {
@@ -154,7 +154,7 @@ Return the new copy directly, without formatting nor prose.
         const fileUrl = await res.text();
 
         await finalScreenshotStatus.update("remixed", {
-          label: "New screenshot",
+          label: "Trashing complete",
           state: "success",
           data: {
             url: fileUrl,

@@ -23,10 +23,7 @@ const worker = {
       const fileName = `${siteName}-${voice || "index"}.jpeg`;
       const fileUrl = `${env.BUCKET_URL}/${fileName}`;
 
-      console.log("fileUrl", fileUrl);
-
       const cachedFile = await env.BUCKET.get(fileName);
-      console.log("cachedFile", cachedFile);
       if (cachedFile && !newHeadings) return new Response(fileUrl);
 
       const browserWSEndpoint = `wss://chrome.browserless.io?token=${env.BROWSERLESS_KEY}`;
@@ -64,9 +61,7 @@ const worker = {
         type: "jpeg",
       });
 
-      console.log("screenshotBuffer", screenshotBuffer);
-      const file = await env.BUCKET.put(fileName, screenshotBuffer);
-
+      await env.BUCKET.put(fileName, screenshotBuffer);
       await browser.close();
 
       return new Response(fileUrl);
