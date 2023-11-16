@@ -1,77 +1,80 @@
 import puppeteer from "@cloudflare/puppeteer";
 
 export interface Env {
-	BROWSER: DurableObjectNamespace;
-	BUCKET: R2Bucket;
-	BUCKET_URL: string;
-	BROWSERLESS_KEY: string;
+  BUCKET: R2Bucket;
+  BUCKET_URL: string;
+  BROWSERLESS_KEY: string;
 }
 
 /**
  * Cloudflare Worker to screenshot a page and optionally update its headings
  */
 const worker = {
-	async fetch(request: Request, env: Env): Promise<Response> {
-		try {
-			const body: any = await request.json();
+  async fetch(request: Request, env: Env): Promise<Response> {
+    try {
+      const body: any = await request.json();
 
-			const { url: pageUrl, newHeadings, voice, fullPage = false } = body;
+      const { url: pageUrl, newHeadings, voice, fullPage = false } = body;
 
-			if (!pageUrl) return new Response("Please include a URL to visit");
+      if (!pageUrl) return new Response("Please include a URL to visit");
 
-			const url = new URL(pageUrl).toString();
-			const siteName = url.replace(/https:\/\//g, "").replace(/\.|\//g, "");
-			const fileName = `${siteName}-${voice || "index"}.jpeg`;
-			const fileUrl = `${env.BUCKET_URL}/${fileName}`;
+      const url = new URL(pageUrl).toString();
+      const siteName = url.replace(/https:\/\//g, "").replace(/\.|\//g, "");
+      const fileName = `${siteName}-${voice || "index"}.jpeg`;
+      const fileUrl = `${env.BUCKET_URL}/${fileName}`;
 
-			const cachedFile = await env.BUCKET.get(fileName);
-			if (cachedFile && !newHeadings) return new Response(fileUrl);
+      console.log("fileUrl", fileUrl);
 
-			const browserWSEndpoint = `wss://chrome.browserless.io?token=${env.BROWSERLESS_KEY}`;
-			const browser = await puppeteer.connect({
-				browserWSEndpoint,
-			});
+      const cachedFile = await env.BUCKET.get(fileName);
+      console.log("cachedFile", cachedFile);
+      if (cachedFile && !newHeadings) return new Response(fileUrl);
 
-			const page = await browser.newPage();
+      const browserWSEndpoint = `wss://chrome.browserless.io?token=${env.BROWSERLESS_KEY}`;
+      const browser = await puppeteer.connect({
+        browserWSEndpoint,
+      });
 
-			await page.setViewport({ width: 1280, height: 1920 });
-			await page.goto(url, {
-				waitUntil: "networkidle2",
-				timeout: 30 * 1000,
-			});
+      const page = await browser.newPage();
 
-			// Loop over and replace headings if applicable
-			if (newHeadings) {
-				const headings = await page.$$("h1, h2, h3, p");
+      await page.setViewport({ width: 1280, height: 1920 });
+      await page.goto(url, {
+        waitUntil: "networkidle2",
+        timeout: 30 * 1000,
+      });
 
-				for (const newHeading of newHeadings) {
-					if (newHeading.id < headings.length) {
-						await page.evaluate(
-							(el: any, value: string) => (el.textContent = value),
-							headings[newHeading.id],
-							newHeading.text
-						);
-					}
-				}
-			}
+      // Loop over and replace headings if applicable
+      if (newHeadings) {
+        const headings = await page.$$("h1, h2, h3, p");
 
-			// Take a screenshot
-			const screenshotBuffer = await page.screenshot({
-				fullPage: fullPage,
-				captureBeyondViewport: fullPage,
-				type: "jpeg",
-			});
+        for (const newHeading of newHeadings) {
+          if (newHeading.id < headings.length) {
+            await page.evaluate(
+              (el: any, value: string) => (el.textContent = value),
+              headings[newHeading.id],
+              newHeading.text
+            );
+          }
+        }
+      }
 
-			await env.BUCKET.put(fileName, screenshotBuffer);
+      // Take a screenshot
+      const screenshotBuffer = await page.screenshot({
+        fullPage: fullPage,
+        captureBeyondViewport: fullPage,
+        type: "jpeg",
+      });
 
-			await browser.close();
+      console.log("screenshotBuffer", screenshotBuffer);
+      const file = await env.BUCKET.put(fileName, screenshotBuffer);
 
-			return new Response(fileUrl);
-		} catch (error) {
-			console.error("Failed to reach browser", error);
-			return new Response("Failed to reach browser", { status: 500 });
-		}
-	},
+      await browser.close();
+
+      return new Response(fileUrl);
+    } catch (error) {
+      console.error("Failed to reach browser", error);
+      return new Response("Failed to reach browser", { status: 500 });
+    }
+  },
 };
 
 export default worker;
