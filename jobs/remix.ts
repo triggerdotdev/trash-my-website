@@ -84,7 +84,7 @@ client.defineJob({
     const data = await page.text();
 
     const queryFunction = load(data, {}, false);
-    const headingElements = queryFunction("h1, h2, h3, p");
+    const headingElements = queryFunction("h1, h2, h3, h4, h5, h6, p");
     let headings: string[] = [];
     headingElements.each((_, element) => {
       const elementText = queryFunction(element)?.text?.();
