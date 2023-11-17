@@ -21,21 +21,20 @@ export const Footer = () => {
             , an open source background jobs framework.
           </p>
         </div>
-        <div className="flex items-center gap-6 justify-between sm:justify-end w-full lg:w-fit">
-          <Link
-            href="https://trigger.dev/showcase/projects/auto-changelog"
-            target="_blank"
+        <Link
+          href="https://trigger.dev/"
+          target="_blank"
+          className="w-full sm:w-fit"
+        >
+          <Button
+            variant="secondary"
+            size="sm"
+            className="group text-dimmed font-normal whitespace-nowrap"
           >
-            <Button
-              variant="secondary"
-              size="sm"
-              className="group text-dimmed font-normal whitespace-nowrap space-x-1"
-            >
-              Read the blogpost
-              <ArrowRightIcon className="w-4 h-4 group-hover:translate-x-1 transition" />
-            </Button>
-          </Link>
-        </div>
+            Trigger.dev
+            <ArrowRightIcon className="w-4 h-4 ml-1 group-hover:translate-x-1 transition" />
+          </Button>
+        </Link>
       </div>
     </footer>
   );
