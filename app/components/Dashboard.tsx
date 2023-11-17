@@ -120,7 +120,7 @@ function Dashboard({ existingResult }: Props) {
         e.preventDefault();
         submit();
       }}
-      className="w-full max-w-7xl h-full flex flex-col grow px-6 lg:p-12 pb-12 pt-20 lg:pt-24 space-y-12"
+      className="w-full max-w-7xl h-full flex flex-col grow px-6 lg:p-12 pb-24 pt-20 lg:pt-24 space-y-6"
     >
       <div className="flex items-end justify-between w-full flex-wrap lg:flex-nowrap gap-4">
         <Input
@@ -130,8 +130,8 @@ function Dashboard({ existingResult }: Props) {
           initialValue={pageUrl}
           clearable
         />
-        <div className="flex flex-col justify-end space-y-2">
-          <div className="text-dimmed text-sm">
+        <div className="flex flex-col justify-end space-y-2 overflow-x-auto -ml-6 sm:ml-0 sm:pl-0 pl-6 sm:min-w-fit min-w-[calc(100%_+_46px)]">
+          <div className="text-dimmed text-sm hidden sm:block">
             What type of copy do you want?
           </div>
           <div className="flex items-end relative divide-midnight-650 divide-x">
@@ -140,7 +140,7 @@ function Dashboard({ existingResult }: Props) {
                 key={key}
                 onClick={() => setSelectedVoice(key as Voice)}
                 className={cn(
-                  "whitespace-nowrap text-dimmed text-sm h-10 px-4 first:rounded-l-md last:rounded-r-md",
+                  "whitespace-nowrap text-dimmed text-sm h-8 sm:h-10 px-4 first:rounded-l-md last:rounded-r-md",
                   key == selectedVoice
                     ? "bg-midnight-700"
                     : "bg-midnight-800 hover:bg-midnight-750"
@@ -152,7 +152,11 @@ function Dashboard({ existingResult }: Props) {
             ))}
           </div>
         </div>
-        <Button disabled={!validUrl || loading} type="submit">
+        <Button
+          disabled={!validUrl || loading}
+          type="submit"
+          className="w-full md:w-auto"
+        >
           Generate
         </Button>
       </div>
@@ -256,7 +260,7 @@ function Dashboard({ existingResult }: Props) {
         {remixedUrl ? (
           <Button
             size="lg"
-            className="absolute -bottom-5 left-1/2 -translate-x-1/2"
+            className="absolute z-10 sm:-bottom-5 bottom-8 left-1/2 -translate-x-1/2"
             variant="default"
             disabled={!remixedUrl}
             onClick={copyLink}
