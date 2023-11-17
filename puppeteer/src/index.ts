@@ -41,7 +41,7 @@ const worker = {
 
       // Loop over and replace headings if applicable
       if (newHeadings) {
-        const headings = await page.$$("h1, h2, h3, p");
+        const headings = await page.$$("h1, h2, h3, h4, h5, h6, p");
 
         for (const newHeading of newHeadings) {
           if (newHeading.id < headings.length) {
