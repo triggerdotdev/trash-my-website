@@ -1,7 +1,6 @@
 export const voices = {
   pirate: { label: "🏴‍☠️ Pirate", value: "a pirate" },
   shakespeare: { label: "🎭 Shakespeare", value: "William Shakespeare" },
-  rhyming: { label: "🎤 Rhyming", value: "rhyming" },
   yoda: { label: "🧙 Yoda", value: "Master Yoda" },
   cuss: {
     label: "🤬 F*ck it!",
