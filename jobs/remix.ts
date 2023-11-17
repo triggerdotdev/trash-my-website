@@ -4,7 +4,7 @@ import { load } from "cheerio";
 import { z } from "zod";
 
 const MAX_HEADING_LENGTH = 200;
-const MAX_HEADING_COUNT = 20;
+const MAX_HEADING_COUNT = 50;
 
 const workerUrl = process.env.WORKER_URL || "";
 
@@ -142,7 +142,7 @@ client.defineJob({
         text,
       }));
 
-    await io.logger.info("newHeadings", newHeadings);
+    await io.logger.info("newHeadings", { headings, newHeadings });
 
     await aiStatus.update("new-headings-complete", {
       label: "Trashed text",
