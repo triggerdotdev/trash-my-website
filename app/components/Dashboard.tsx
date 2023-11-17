@@ -194,8 +194,10 @@ function Dashboard({ existingResult }: Props) {
         ) : null}
 
         {error && (
-          <div className="border-midnight-800/80 border z-50 flex items-start gap-3 p-6 flex-col justify-start shadow-xl w-96 bg-midnight-950/90 rounded-lg">
-            {error}
+          <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center">
+            <div className="border-midnight-800/80 border z-50 flex items-start gap-3 p-6 flex-col justify-start shadow-xl w-96 bg-midnight-950/90 rounded-lg text-rose-500">
+              {error}
+            </div>
           </div>
         )}
 
