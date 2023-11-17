@@ -88,7 +88,7 @@ function Dashboard({ existingResult }: Props) {
       )}/${selectedVoice}`
     );
 
-    toast.success("Copied to clipboard");
+    toast.success("Link copied to clipboard");
   }, [pageUrl, selectedVoice]);
 
   const runInProgress = run?.status !== "SUCCESS" && run?.status !== "FAILURE";
@@ -132,7 +132,7 @@ function Dashboard({ existingResult }: Props) {
           initialValue={pageUrl}
           clearable
         />
-        <div className="flex flex-col justify-end sm:space-y-2 overflow-x-auto -ml-6 sm:ml-0 sm:pl-0 px-6 sm:min-w-fit min-w-[calc(100%_+_40px)]">
+        <div className="flex flex-col justify-end sm:space-y-2 overflow-x-auto -ml-6 sm:ml-0 sm:pl-0 pl-6 pr-0 sm:min-w-fit min-w-[calc(100%_+_40px)]">
           <div className="text-dimmed text-sm hidden sm:block">
             How do you want to trash it?
           </div>
@@ -260,7 +260,7 @@ function Dashboard({ existingResult }: Props) {
           ) : null}
         </div>
         {remixedUrl ? (
-          <div className="p-0 sm:p-2 bg-slate-900 rounded-lg fixed z-10 sm:bottom-[5.2rem] lg:bottom-[6.2rem] bottom-8 left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] sm:w-fit">
+          <div className="p-0 sm:p-2 bg-slate-900 rounded-lg fixed z-10 sm:bottom-[5.2rem] lg:bottom-[6.2rem] bottom-8 left-1/2 -translate-x-1/2 w-[calc(100%-4rem)] sm:w-fit">
             <Button
               size="lg"
               className="w-full"
