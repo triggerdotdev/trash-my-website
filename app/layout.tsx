@@ -10,8 +10,8 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-  title: "Copy AI",
-  description: "Improve your landing page copy with AI.",
+  title: "TrashMySite.ai",
+  description: "Trash your website copy with AI.",
   metadataBase: new URL(
     process.env.VERCEL_URL
       ? `https://${process.env.VERCEL_URL}`
