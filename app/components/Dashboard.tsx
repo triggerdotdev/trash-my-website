@@ -5,10 +5,12 @@ import { voices } from "@/app/constants";
 import { Voice } from "@/app/types";
 import { cn, copyToClipboard, validateUrl } from "@/app/utils";
 import {
+  ArrowTopRightIcon,
   CheckIcon,
   Cross1Icon,
   Link2Icon,
   ReloadIcon,
+  Share2Icon,
 } from "@radix-ui/react-icons";
 import { useEventRunStatuses } from "@trigger.dev/react";
 import { motion } from "framer-motion";
@@ -129,7 +131,7 @@ function Dashboard({ existingResult }: Props) {
           initialValue={pageUrl}
           clearable
         />
-        <div className="flex flex-col justify-end space-y-0.5">
+        <div className="flex flex-col justify-end space-y-1">
           <div className="text-dimmed text-sm">
             What type of copy do you want?
           </div>
@@ -227,7 +229,9 @@ function Dashboard({ existingResult }: Props) {
             rightLabel="After"
             value={[progress]}
             disabled={!remixedUrl}
-            className={cn("w-64 mr-4", { "opacity-0": !submitted })}
+            className={cn("w-64 mr-4", {
+              "opacity-0": !submitted || !remixedUrl,
+            })}
             onValueChange={(value) => setProgress(value[0] || 0)}
           />
           <div />
@@ -252,15 +256,15 @@ function Dashboard({ existingResult }: Props) {
         </div>
         {remixedUrl ? (
           <Button
-            size="sm"
-            className="absolute top-12 right-2"
-            variant="secondary"
+            size="lg"
+            className="absolute -bottom-5 left-1/2 -translate-x-1/2"
+            variant="default"
             disabled={!remixedUrl}
             onClick={copyLink}
             type="button"
           >
             <span>Share</span>
-            <Link2Icon className="w-5 h-5 ml-2" />
+            <Share2Icon className="w-5 h-5 ml-2" />
           </Button>
         ) : null}
       </div>
