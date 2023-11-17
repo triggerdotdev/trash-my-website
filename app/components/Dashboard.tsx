@@ -258,12 +258,12 @@ function Dashboard({ existingResult }: Props) {
             />
           ) : null}
         </div>
-        {!remixedUrl ? (
+        {remixedUrl ? (
           <Button
             size="lg"
             className="fixed z-10 sm:bottom-[5.8rem] bottom-8 left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] sm:w-fit"
             variant="default"
-            // disabled={!remixedUrl}
+            disabled={!remixedUrl}
             onClick={copyLink}
             type="button"
           >
