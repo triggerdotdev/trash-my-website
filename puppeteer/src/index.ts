@@ -43,7 +43,8 @@ const worker = {
       if (newHeadings) {
         const headings = await page.$$("h1, h2, h3, h4, h5, h6, p");
 
-        for (const newHeading of newHeadings) {
+        for (let index = 0; index < newHeadings.length; index++) {
+          const newHeading = newHeadings[index];
           if (newHeading.id < headings.length) {
             await page.evaluate(
               (el: any, value: string) => (el.textContent = value),
