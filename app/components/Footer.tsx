@@ -5,10 +5,9 @@ import { ArrowRightIcon } from "@radix-ui/react-icons";
 
 export const Footer = () => {
   return (
-    <footer className="fixed bottom-0 left-0 w-screen py-4 border-t bg-background border-slate-800">
+    <footer className="hidden sm:block fixed bottom-0 left-0 w-screen py-4 border-t bg-background border-slate-800">
       <div className="flex flex-col sm:flex-row gap-y-4 items-center sm:items-end lg:items-center justify-between h-full pl-4 pr-3 text-dimmed text-sm">
         <div className="flex flex-col w-full lg:flex-row sm:items-baseline gap-0 sm:gap-2">
-          <p className="font-medium text-sm sm:text-base">How does it work?</p>
           <p className="text-xs sm:text-sm">
             This site is powered by{" "}
             <Link

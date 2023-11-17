@@ -21,6 +21,7 @@ import { callTrigger } from "../actions";
 import { Button } from "./Button";
 import Input from "./Input";
 import { Slider } from "./Slider";
+import { Spinner } from "./Spinner";
 
 type Props = {
   existingResult?: {
@@ -120,19 +121,19 @@ function Dashboard({ existingResult }: Props) {
         e.preventDefault();
         submit();
       }}
-      className="w-full max-w-7xl h-full flex flex-col grow px-6 lg:p-12 pb-24 pt-20 lg:pt-24 space-y-6"
+      className="w-full max-w-7xl h-full flex flex-col grow px-4 lg:p-12 pb-24 pt-16 lg:pt-24 space-y-6"
     >
       <div className="flex items-end justify-between w-full flex-wrap lg:flex-nowrap gap-4">
         <Input
-          label="Enter a website URL:"
+          label="Enter a website URL"
           className={cn("w-full", { "!ring-green-400/60": validUrl })}
           onChange={setPageUrl}
           initialValue={pageUrl}
           clearable
         />
-        <div className="flex flex-col justify-end space-y-2 overflow-x-auto -ml-6 sm:ml-0 sm:pl-0 pl-6 sm:min-w-fit min-w-[calc(100%_+_46px)]">
+        <div className="flex flex-col justify-end sm:space-y-2 overflow-x-auto -ml-6 sm:ml-0 sm:pl-0 px-6 sm:min-w-fit min-w-[calc(100%_+_40px)]">
           <div className="text-dimmed text-sm hidden sm:block">
-            What type of copy do you want?
+            How do you want to trash it?
           </div>
           <div className="flex items-end relative divide-midnight-650 divide-x">
             {Object.entries(voices).map(([key, item]) => (
@@ -167,8 +168,8 @@ function Dashboard({ existingResult }: Props) {
         )}
       >
         {messages.length > 0 && runInProgress ? (
-          <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center">
-            <div className="border-midnight-800/80 border z-50 flex items-start gap-3 p-6 flex-col justify-start shadow-xl w-96 bg-midnight-950/90 rounded-lg">
+          <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center p-4">
+            <div className="border-midnight-800/80 border z-50 flex items-start gap-3 p-6 flex-col justify-start shadow-xl w-96 bg-black/80 rounded-lg backdrop-blur-sm">
               {messages.map(({ key, state, label }) => (
                 <motion.div
                   key={key}
@@ -189,7 +190,7 @@ function Dashboard({ existingResult }: Props) {
                   ) : state == "success" ? (
                     <CheckIcon className="w-5 h-5" />
                   ) : (
-                    <ReloadIcon className="w-5 h-5 animate-spin" />
+                    <Spinner className="w-5 h-5" />
                   )}
                   <span>{label}</span>
                 </motion.div>
@@ -199,7 +200,7 @@ function Dashboard({ existingResult }: Props) {
         ) : null}
 
         {error && (
-          <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center">
+          <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center p-4">
             <div className="border-midnight-800/80 border z-50 flex items-start gap-3 p-6 flex-col justify-start shadow-xl w-96 bg-midnight-950/90 rounded-lg text-rose-500">
               {error}
             </div>
@@ -208,13 +209,13 @@ function Dashboard({ existingResult }: Props) {
 
         <div
           className={cn(
-            "h-10 rounded-t-lg w-full flex items-center justify-between px-4",
+            "h-10 rounded-t-lg w-full flex items-center justify-center sm:justify-between px-4",
             submitted
               ? "border-b-2 border-midnight-800 bg-midnight-800"
               : "border-dashed-wide py-0.5"
           )}
         >
-          <div className="flex items-center gap-1.5">
+          <div className="sm:flex items-center gap-1.5 hidden">
             {Array(3)
               .fill(0)
               .map((_, i) => (
@@ -232,7 +233,7 @@ function Dashboard({ existingResult }: Props) {
             rightLabel="After"
             value={[progress]}
             disabled={!remixedUrl}
-            className={cn("w-64 mr-4", {
+            className={cn("w-48 sm:w-64 sm:mr-4 text-sm sm:text-base", {
               "opacity-0": !submitted || !remixedUrl,
             })}
             onValueChange={(value) => setProgress(value[0] || 0)}
@@ -257,12 +258,12 @@ function Dashboard({ existingResult }: Props) {
             />
           ) : null}
         </div>
-        {remixedUrl ? (
+        {!remixedUrl ? (
           <Button
             size="lg"
-            className="absolute z-10 sm:-bottom-5 bottom-8 left-1/2 -translate-x-1/2"
+            className="fixed z-10 sm:bottom-[5.8rem] bottom-8 left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] sm:w-fit"
             variant="default"
-            disabled={!remixedUrl}
+            // disabled={!remixedUrl}
             onClick={copyLink}
             type="button"
           >
