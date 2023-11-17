@@ -1,9 +1,7 @@
-import { ImageResponse } from "next/og";
-import { validateUrl } from "@/app/utils";
-import { voices } from "@/app/constants";
-import { Voice } from "@/app/types";
-import { imageUrlFromConfig } from "@/app/imageUrlFromConfig";
 import { LogoFlat } from "@/app/components/Logo";
+import { imageUrlFromConfig } from "@/app/imageUrlFromConfig";
+import { Voice } from "@/app/types";
+import { ImageResponse } from "next/og";
 
 export const runtime = "edge";
 export const contentType = "image/png";
@@ -44,24 +42,12 @@ export default async function Image({ params }: Props) {
           width: "100%",
           justifyContent: "flex-start",
           overflowY: "hidden",
-          padding: "2rem",
+          padding: "0rem",
           paddingBottom: 0,
           position: "relative",
           gap: "1rem",
         }}
       >
-        <div
-          style={{
-            fontSize: "3rem",
-            display: "flex",
-            alignItems: "center",
-            gap: "0.75rem",
-            color: "white",
-          }}
-        >
-          <div>Try it at </div>
-          <LogoFlat style={{ fontSize: "3rem", padding: 0, margin: 0 }} />
-        </div>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           style={{
