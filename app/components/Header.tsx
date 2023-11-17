@@ -5,7 +5,7 @@ import { Logo } from "./Logo";
 
 function Header() {
   return (
-    <header className="w-screen h-14 border-b border-slate-800 fixed top-0 z-10 bg-midnight-900">
+    <header className="w-screen h-14 border-b border-slate-800 backdrop-blur-sm fixed top-0 z-10 bg-midnight-900/50">
       <div className="flex items-center justify-between h-full px-3 text-midnight-400">
         <div className="flex items-baseline gap-2">
           <Link href="/">
