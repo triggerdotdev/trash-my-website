@@ -7,5 +7,5 @@ export const voices = {
     label: "🤬 F*ck it!",
     value: "cuss words (use a*terisks to make it safe)",
   },
-  useful: { label: "✨ Useful", value: "useful" },
+  boomer: { label: "👴 Boomer", value: "tech-illiterate boomer" },
 };
