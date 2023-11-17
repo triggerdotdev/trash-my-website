@@ -5,7 +5,7 @@ import Header from "@/app/components/Header";
 
 export default function Home() {
   return (
-    <main className="flex min-h-screen pb-16 flex-col items-center justify-between relative">
+    <main className="flex min-h-screen pb-6 flex-col items-center justify-between relative">
       <Header />
       <Dashboard />
       <Gradients />

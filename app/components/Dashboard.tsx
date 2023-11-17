@@ -4,14 +4,7 @@
 import { voices } from "@/app/constants";
 import { Voice } from "@/app/types";
 import { cn, copyToClipboard, validateUrl } from "@/app/utils";
-import {
-  ArrowTopRightIcon,
-  CheckIcon,
-  Cross1Icon,
-  Link2Icon,
-  ReloadIcon,
-  Share2Icon,
-} from "@radix-ui/react-icons";
+import { CheckIcon, Cross1Icon, Share2Icon } from "@radix-ui/react-icons";
 import { useEventRunStatuses } from "@trigger.dev/react";
 import { motion } from "framer-motion";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -121,7 +114,7 @@ function Dashboard({ existingResult }: Props) {
         e.preventDefault();
         submit();
       }}
-      className="w-full max-w-7xl h-full flex flex-col grow px-4 lg:p-12 pb-24 pt-16 lg:pt-24 space-y-6"
+      className="w-full max-w-7xl h-full flex flex-col grow px-4 lg:p-12 pb-20 lg:pb-24 pt-16 lg:pt-24 space-y-6"
     >
       <div className="flex items-end justify-between w-full flex-wrap lg:flex-nowrap gap-4">
         <Input
@@ -259,17 +252,19 @@ function Dashboard({ existingResult }: Props) {
           ) : null}
         </div>
         {remixedUrl ? (
-          <Button
-            size="lg"
-            className="fixed z-10 sm:bottom-[5.8rem] bottom-8 left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] sm:w-fit"
-            variant="default"
-            disabled={!remixedUrl}
-            onClick={copyLink}
-            type="button"
-          >
-            <span>Share</span>
-            <Share2Icon className="w-5 h-5 ml-2" />
-          </Button>
+          <div className="p-0 sm:p-2 bg-slate-900 rounded-lg fixed z-10 sm:bottom-[5.2rem] lg:bottom-[6.2rem] bottom-8 left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] sm:w-fit">
+            <Button
+              size="lg"
+              className="w-full"
+              variant="default"
+              disabled={!remixedUrl}
+              onClick={copyLink}
+              type="button"
+            >
+              <span>Share</span>
+              <Share2Icon className="w-5 h-5 ml-2" />
+            </Button>
+          </div>
         ) : null}
       </div>
     </form>

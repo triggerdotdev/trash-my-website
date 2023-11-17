@@ -17,7 +17,7 @@ export const Footer = () => {
             >
               Trigger.dev
             </Link>
-            , an open source background jobs framework.
+            , the open source background jobs framework.
           </p>
         </div>
         <Link
