@@ -43,7 +43,7 @@ function Input({
   }, []);
 
   return (
-    <div className="space-y-0.5 w-full max-w-xs group">
+    <div className="space-y-2 w-full group">
       {label && (
         <label className="text-sm text-dimmed" htmlFor={inputId}>
           {label}
@@ -60,7 +60,7 @@ function Input({
           disabled={disabled}
           required={required}
           placeholder={placeholder}
-          className={`${className} p-2 pr-8 h-10 placeholder:text-midnight-500 text-ellipsis rounded-md border border-midnight-700 bg-midnight-850 enabled:hover:bg-midnight-800 focus:outline-none focus:ring-4 ring-indigo-500/60 focus:border-opacity-0 w-full transition-colors disabled:opacity-70`}
+          className={`${className} p-2 pr-8 h-10 placeholder:text-midnight-500 text-ellipsis rounded-md border border-midnight-700 bg-transparent enabled:hover:bg-midnight-800 focus:outline-none focus:ring-4 ring-indigo-500/60 focus:border-opacity-0 w-full transition-colors disabled:opacity-70`}
         />
         {clearable && (
           <button

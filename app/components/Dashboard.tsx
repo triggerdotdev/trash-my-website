@@ -120,18 +120,17 @@ function Dashboard({ existingResult }: Props) {
         e.preventDefault();
         submit();
       }}
-      className="w-full max-w-7xl h-full flex flex-col grow p-12 pt-32 space-y-12"
+      className="w-full max-w-7xl h-full flex flex-col grow px-6 lg:p-12 pb-12 pt-20 lg:pt-24 space-y-12"
     >
-      <div className="flex items-end justify-between flex-wrap w-full gap-4">
+      <div className="flex items-end justify-between w-full flex-wrap lg:flex-nowrap gap-4">
         <Input
-          label="Your landing page:"
-          className={cn({ "!ring-green-400/60": validUrl })}
-          placeholder="Enter a URL"
+          label="Enter a website URL:"
+          className={cn("w-full", { "!ring-green-400/60": validUrl })}
           onChange={setPageUrl}
           initialValue={pageUrl}
           clearable
         />
-        <div className="flex flex-col justify-end space-y-1">
+        <div className="flex flex-col justify-end space-y-2">
           <div className="text-dimmed text-sm">
             What type of copy do you want?
           </div>
@@ -160,7 +159,7 @@ function Dashboard({ existingResult }: Props) {
       <div
         className={cn(
           "w-full grow h-full relative flex flex-col rounded-lg",
-          submitted ? "border-2 border-midnight-800" : "border-dashed-wide"
+          submitted ? "border border-midnight-800" : "border-dashed-wide"
         )}
       >
         {messages.length > 0 && runInProgress ? (
