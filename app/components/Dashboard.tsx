@@ -43,16 +43,20 @@ function Dashboard({ existingResult }: Props) {
 
   // Allow screenshot URL to be passed from search params
   const remixedUrl = useMemo<string | undefined>(() => {
+    if (run?.status === "SUCCESS") {
+      return run?.output?.remixedUrl;
+    }
+
     if (!loading && existingResult?.remixedImageUrl) {
       setProgress(1);
       return existingResult.remixedImageUrl;
     }
-
-    const remixedUrl = statuses?.find(({ key }) => key == "remix")?.data
-      ?.url as string | undefined;
-
-    return remixedUrl;
-  }, [existingResult?.remixedImageUrl, loading, statuses]);
+  }, [
+    existingResult?.remixedImageUrl,
+    loading,
+    run?.output?.remixedUrl,
+    run?.status,
+  ]);
 
   const submit = useCallback(async () => {
     if (!validUrl) return;

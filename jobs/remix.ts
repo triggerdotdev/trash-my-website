@@ -175,5 +175,7 @@ client.defineJob({
         url: fileUrl,
       },
     });
+
+    return { remixedUrl: fileUrl };
   },
 });
