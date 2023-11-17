@@ -3,6 +3,7 @@
 import { client } from "@/trigger";
 import { cookies } from "next/headers";
 import { Voice } from "./types";
+import { voices } from "./constants";
 
 export async function callTrigger({
   id,
@@ -19,7 +20,7 @@ export async function callTrigger({
     id,
     payload: {
       url,
-      voice,
+      voice: voice ? { slug: voice, prompt: voices[voice].value } : undefined,
     },
   });
 

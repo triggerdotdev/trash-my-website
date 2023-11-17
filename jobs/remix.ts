@@ -1,9 +1,7 @@
-import { eventTrigger, isTriggerError } from "@trigger.dev/sdk";
 import { client, openai } from "@/trigger";
-import { z } from "zod";
+import { eventTrigger } from "@trigger.dev/sdk";
 import { load } from "cheerio";
-import { voices } from "@/app/constants";
-import { Voice } from "@/app/types";
+import { z } from "zod";
 
 const MAX_HEADING_LENGTH = 200;
 const MAX_HEADING_COUNT = 20;
@@ -21,7 +19,12 @@ client.defineJob({
     name: "remix.event",
     schema: z.object({
       url: z.string().url(),
-      voice: z.string().optional(),
+      voice: z
+        .object({
+          slug: z.string(),
+          prompt: z.string(),
+        })
+        .optional(),
     }),
   }),
   integrations: {
@@ -89,18 +92,12 @@ client.defineJob({
       state: "success",
     });
 
-    const style = voices[voice as Voice].value;
+    const style = voice?.prompt;
 
-    const prefix = `
-You're a copywriting pro.
-You'll remix the following landing page headings ${
+    const prefix = `You're a copywriting pro. You'll remix the following landing page headings ${
       style ? "in the style of " + style : "to be more useful"
-    }!
-Keep headings roughly the same length.
-Keep headings in the same order.
-Return the new copy directly, without formatting nor prose.
-      `;
-    const prompt = `${prefix.trim()}\n\nHeadings:\n${headings.join("\n")}`;
+    }! Keep headings roughly the same length. Keep headings in the same order. Return the new copy directly, without formatting nor prose. Don't prefix the headings with numbers or bullets. Just the headings, one per line.`;
+    const prompt = `${prefix.trim()}\n\n${headings.join("\n")}`;
 
     const aiStatus = await io.createStatus("new-headings", {
       label: "Trashing text",
@@ -132,6 +129,8 @@ Return the new copy directly, without formatting nor prose.
         text,
       }));
 
+    await io.logger.info("newHeadings", newHeadings);
+
     aiStatus.update("new-headings-complete", {
       label: "Trashed text",
       state: "success",
@@ -148,7 +147,7 @@ Return the new copy directly, without formatting nor prose.
         body: JSON.stringify({
           url,
           newHeadings,
-          voice,
+          voice: voice?.slug,
         }),
       });
 
