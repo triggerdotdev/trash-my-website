@@ -78,7 +78,11 @@ function Dashboard({ existingResult }: Props) {
     })) ?? [];
 
   const copyLink = useCallback(() => {
-    copyToClipboard(`${window.location.origin}/${pageUrl}/${selectedVoice}`);
+    copyToClipboard(
+      `${window.location.origin}/${encodeURIComponent(
+        pageUrl
+      )}/${selectedVoice}`
+    );
 
     toast.success("Copied to clipboard");
   }, [pageUrl, selectedVoice]);

@@ -18,9 +18,9 @@ export default function Home({ params: { url, voice } }: Props) {
       <Header />
       <Dashboard
         existingResult={{
-          url,
+          url: decodeURIComponent(url),
           voice,
-          remixedImageUrl: imageUrlFromConfig(url, voice),
+          remixedImageUrl: imageUrlFromConfig(decodeURIComponent(url), voice),
         }}
       />
       <Gradients />
