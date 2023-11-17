@@ -51,7 +51,7 @@ export default async function Image({ params }: Props) {
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           style={{
-            borderRadius: "1rem",
+            borderRadius: "0.5rem",
           }}
           src={imageUrl}
           alt="Screenshot of website"
