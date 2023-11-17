@@ -1,31 +1,41 @@
-import { ArrowRightIcon } from "@radix-ui/react-icons";
-import { Button } from "./Button";
 import Link from "next/link";
 import React from "react";
+import { Button } from "./Button";
+import { ArrowRightIcon } from "@radix-ui/react-icons";
 
 export const Footer = () => {
   return (
-    <footer className="fixed bottom-0 left-0 w-screen h-14 border-t border-midnight-800 bg-midnight-900">
-      <div className="flex items-center justify-between h-full px-4 text-midnight-450 text-sm">
-        <div className="flex gap-2">
-          <span className="text-primary font-semibold">How does it work?</span>{" "}
-          <div className="text-sm">
+    <footer className="fixed bottom-0 left-0 w-screen py-4 border-t bg-background border-slate-800">
+      <div className="flex flex-col sm:flex-row gap-y-4 items-center sm:items-end lg:items-center justify-between h-full pl-4 pr-3 text-dimmed text-sm">
+        <div className="flex flex-col w-full lg:flex-row sm:items-baseline gap-0 sm:gap-2">
+          <p className="font-medium text-sm sm:text-base">How does it work?</p>
+          <p className="text-xs sm:text-sm">
             This site is powered by{" "}
-            <Link href="https://trigger.dev" target="_blank">
+            <Link
+              href="https://trigger.dev"
+              target="_blank"
+              className="hover:text-indigo-500 text-primary font-normal"
+            >
               Trigger.dev
-            </Link>{" "}
+            </Link>
             , an open source background jobs framework.
-          </div>
+          </p>
         </div>
-        <Link
-          href="https://github.com/triggerdotdev/autochangelog"
-          target="_blank"
-        >
-          <Button variant="ghost" className="space-x-1">
-            <span>Explore the code</span>
-            <ArrowRightIcon className="w-4 h-4" />
-          </Button>
-        </Link>
+        <div className="flex items-center gap-6 justify-between sm:justify-end w-full lg:w-fit">
+          <Link
+            href="https://trigger.dev/showcase/projects/auto-changelog"
+            target="_blank"
+          >
+            <Button
+              variant="secondary"
+              size="sm"
+              className="group text-dimmed font-normal whitespace-nowrap space-x-1"
+            >
+              Read the blogpost
+              <ArrowRightIcon className="w-4 h-4 group-hover:translate-x-1 transition" />
+            </Button>
+          </Link>
+        </div>
       </div>
     </footer>
   );
