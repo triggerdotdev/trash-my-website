@@ -1,4 +1,5 @@
 import { ImageResponse } from "next/og";
+import { LogoFlat } from "./components/Logo";
 
 export const runtime = "edge";
 export const contentType = "image/png";
@@ -35,35 +36,21 @@ export default async function Image() {
           padding: "2rem",
           paddingBottom: 0,
           position: "relative",
+          fontFamily: "Poppins",
         }}
       >
         <div
           style={{
             width: "100%",
             color: "white",
-            padding: "2rem",
+            padding: "0rem",
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
             justifyContent: "center",
           }}
         >
-          <span
-            style={{
-              fontSize: "2rem",
-              fontWeight: 600,
-            }}
-          >
-            Remix your landing page copy with AI
-          </span>
-          <span
-            style={{
-              fontWeight: 500,
-              color: "#94A3B8",
-            }}
-          >
-            Try it at copyai.rubric.sh
-          </span>
+          <LogoFlat style={{ fontSize: "3rem" }} />
         </div>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
@@ -78,11 +65,6 @@ export default async function Image() {
     {
       ...size,
       fonts: [
-        {
-          name: "Poppins",
-          data: poppinsMedium,
-          weight: 500,
-        },
         {
           name: "Poppins",
           data: poppinsSemibold,

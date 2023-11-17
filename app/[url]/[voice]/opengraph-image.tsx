@@ -3,6 +3,7 @@ import { validateUrl } from "@/app/utils";
 import { voices } from "@/app/constants";
 import { Voice } from "@/app/types";
 import { imageUrlFromConfig } from "@/app/imageUrlFromConfig";
+import { LogoFlat } from "@/app/components/Logo";
 
 export const runtime = "edge";
 export const contentType = "image/png";
@@ -46,35 +47,20 @@ export default async function Image({ params }: Props) {
           padding: "2rem",
           paddingBottom: 0,
           position: "relative",
+          gap: "1rem",
         }}
       >
         <div
           style={{
-            width: "100%",
-            color: "white",
-            padding: "2rem",
+            fontSize: "3rem",
             display: "flex",
-            flexDirection: "column",
             alignItems: "center",
-            justifyContent: "center",
+            gap: "0.75rem",
+            color: "white",
           }}
         >
-          <span
-            style={{
-              fontSize: "2rem",
-              fontWeight: 600,
-            }}
-          >
-            Trash your site with AI
-          </span>
-          <span
-            style={{
-              fontWeight: 500,
-              color: "#94A3B8",
-            }}
-          >
-            Try it at trashmysite.ai
-          </span>
+          <div>Try it at </div>
+          <LogoFlat style={{ fontSize: "3rem", padding: 0, margin: 0 }} />
         </div>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
@@ -89,11 +75,6 @@ export default async function Image({ params }: Props) {
     {
       ...size,
       fonts: [
-        {
-          name: "Poppins",
-          data: poppinsMedium,
-          weight: 500,
-        },
         {
           name: "Poppins",
           data: poppinsSemibold,

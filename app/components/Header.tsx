@@ -2,6 +2,7 @@ import { GitHubLogoIcon } from "@radix-ui/react-icons";
 import Link from "next/link";
 import React from "react";
 import { TriggerLogo } from "./TriggerLogo";
+import { Logo } from "./Logo";
 
 function Header() {
   return (
@@ -9,9 +10,7 @@ function Header() {
       <div className="flex items-center justify-between h-full px-12 text-midnight-400">
         <div className="flex items-baseline gap-2">
           <Link href="/">
-            <h1 className="text-2xl font-bold tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600">
-              LandingPageCopyGenerator
-            </h1>
+            <Logo className="text-2xl" />
           </Link>
           <div className="text-xs flex items-center gap-1">
             by
