@@ -38,24 +38,40 @@ client.defineJob({
       state: "loading",
     });
 
+    await io.runTask("check-url-exists", async () => {
+      try {
+        const res = await fetch(url, { method: "HEAD" });
+
+        if (!res.ok) {
+          throw new Error("We can't trash this site… it doesn't exist!");
+        }
+      } catch (e) {
+        await io.logger.error("error", { e });
+        throw new Error("We can't trash this site… it doesn't exist!");
+      }
+    });
+
     // Fetch initial screenshot in parallel with other tasks
-    io.runTask("initial-screenshot", async () => {
-      const res = await fetch(workerUrl, {
-        method: "POST",
-        body: JSON.stringify({ url }),
-      });
+    const originalImageUrl = await io.runTask(
+      "initial-screenshot",
+      async () => {
+        const res = await fetch(workerUrl, {
+          method: "POST",
+          body: JSON.stringify({ url }),
+        });
 
-      if (!res.ok) throw new Error(res.statusText);
+        if (!res.ok) throw new Error(res.statusText);
 
-      const fileUrl = await res.text();
+        return res.text();
+      }
+    );
 
-      initialScreenshotStatus.update("screenshotted", {
-        label: "Grabbed website",
-        state: "success",
-        data: {
-          url: fileUrl,
-        },
-      });
+    await initialScreenshotStatus.update("screenshotted", {
+      label: "Grabbed website",
+      state: "success",
+      data: {
+        url: originalImageUrl,
+      },
     });
 
     const fetchHeadingsStatus = await io.createStatus("headings", {
@@ -69,9 +85,7 @@ client.defineJob({
 
     const queryFunction = load(data, {}, false);
     const headingElements = queryFunction("h1, h2, h3, p");
-
     let headings: string[] = [];
-
     headingElements.each((_, element) => {
       const elementText = queryFunction(element)?.text?.();
 
@@ -84,10 +98,9 @@ client.defineJob({
         );
       }
     });
-
     headings = headings.slice(0, MAX_HEADING_COUNT);
 
-    fetchHeadingsStatus.update("headings-fetched", {
+    await fetchHeadingsStatus.update("headings-fetched", {
       label: "Extracted text",
       state: "success",
     });
@@ -131,7 +144,7 @@ client.defineJob({
 
     await io.logger.info("newHeadings", newHeadings);
 
-    aiStatus.update("new-headings-complete", {
+    await aiStatus.update("new-headings-complete", {
       label: "Trashed text",
       state: "success",
     });
@@ -141,7 +154,7 @@ client.defineJob({
       state: "loading",
     });
 
-    await io.runTask("new-screenshot", async () => {
+    const fileUrl = await io.runTask("new-screenshot", async () => {
       const res = await fetch(workerUrl, {
         method: "POST",
         body: JSON.stringify({
@@ -152,18 +165,15 @@ client.defineJob({
       });
 
       if (!res.ok) throw new Error(res.statusText);
-
-      const fileUrl = await res.text();
-
-      await finalScreenshotStatus.update("remixed", {
-        label: "Trashing complete",
-        state: "success",
-        data: {
-          url: fileUrl,
-        },
-      });
+      return res.text();
     });
 
-    return;
+    await finalScreenshotStatus.update("remixed", {
+      label: "Trashing complete",
+      state: "success",
+      data: {
+        url: fileUrl,
+      },
+    });
   },
 });

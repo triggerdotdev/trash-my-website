@@ -92,7 +92,7 @@ function Dashboard({ existingResult }: Props) {
   const runInProgress = run?.status !== "SUCCESS" && run?.status !== "FAILURE";
   const error =
     run?.status === "FAILURE"
-      ? run?.output instanceof Error
+      ? "message" in run?.output
         ? run.output.message
         : JSON.stringify(run.output)
       : undefined;
