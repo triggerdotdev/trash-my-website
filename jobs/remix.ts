@@ -66,17 +66,17 @@ client.defineJob({
       }
     );
 
+    const fetchHeadingsStatus = await io.createStatus("headings", {
+      label: "Extracting text",
+      state: "loading",
+    });
+
     await initialScreenshotStatus.update("screenshotted", {
       label: "Grabbed website",
       state: "success",
       data: {
         url: originalImageUrl,
       },
-    });
-
-    const fetchHeadingsStatus = await io.createStatus("headings", {
-      label: "Extracting text",
-      state: "loading",
     });
 
     // Fetch and clean headings
@@ -100,6 +100,11 @@ client.defineJob({
     });
     headings = headings.slice(0, MAX_HEADING_COUNT);
 
+    const aiStatus = await io.createStatus("new-headings", {
+      label: "Trashing text",
+      state: "loading",
+    });
+
     await fetchHeadingsStatus.update("headings-fetched", {
       label: "Extracted text",
       state: "success",
@@ -111,11 +116,6 @@ client.defineJob({
       style ? "in the style of " + style : "to be more useful"
     }! Keep headings roughly the same length. Keep headings in the same order. Return the new copy directly, without formatting nor prose. Don't prefix the headings with numbers or bullets. Just the headings, one per line.`;
     const prompt = `${prefix.trim()}\n\n${headings.join("\n")}`;
-
-    const aiStatus = await io.createStatus("new-headings", {
-      label: "Trashing text",
-      state: "loading",
-    });
 
     // Call the OpenAI API to generate new headings
     const openaiResponse = await io.openai.chat.completions.create(
@@ -144,14 +144,14 @@ client.defineJob({
 
     await io.logger.info("newHeadings", { headings, newHeadings });
 
-    await aiStatus.update("new-headings-complete", {
-      label: "Trashed text",
-      state: "success",
-    });
-
     const finalScreenshotStatus = await io.createStatus("remix", {
       label: "Preparing trashed site",
       state: "loading",
+    });
+
+    await aiStatus.update("new-headings-complete", {
+      label: "Trashed text",
+      state: "success",
     });
 
     const fileUrl = await io.runTask("new-screenshot", async () => {
