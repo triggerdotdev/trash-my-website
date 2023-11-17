@@ -2,6 +2,7 @@ import { ImageResponse } from "next/og";
 import { validateUrl } from "@/app/utils";
 import { voices } from "@/app/constants";
 import { Voice } from "@/app/types";
+import { imageUrlFromConfig } from "@/app/imageUrlFromConfig";
 
 export const runtime = "edge";
 export const contentType = "image/png";
@@ -20,27 +21,7 @@ type Props = {
 export default async function Image({ params }: Props) {
   const { url, voice } = params;
 
-  let image: any;
-
-  if (url && voice) {
-    const parsedUrl = validateUrl(url);
-    if (parsedUrl) {
-      const siteName = new URL(parsedUrl)
-        .toString()
-        .replace(/https:\/\//g, "")
-        .replace(/\.|\//g, "");
-
-      const fileName = `${siteName}-${
-        voices[voice] ? voices[voice].value : "index"
-      }.jpeg`;
-
-      image = `${process.env.NEXT_PUBLIC_BUCKET_URL}/${fileName}`;
-    }
-  } else {
-    image = await fetch(new URL("/public/og.png", import.meta.url)).then(
-      (res) => res.arrayBuffer()
-    );
-  }
+  const imageUrl = imageUrlFromConfig(url, voice);
 
   const poppinsMedium = await fetch(
     new URL("/public/Poppins-Medium.ttf", import.meta.url)
@@ -84,7 +65,7 @@ export default async function Image({ params }: Props) {
               fontWeight: 600,
             }}
           >
-            Remix your landing page copy with AI
+            Trash your site with AI
           </span>
           <span
             style={{
@@ -92,7 +73,7 @@ export default async function Image({ params }: Props) {
               color: "#94A3B8",
             }}
           >
-            Try it at copyai.rubric.sh
+            Try it at trashmysite.ai
           </span>
         </div>
         {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -100,7 +81,7 @@ export default async function Image({ params }: Props) {
           style={{
             borderRadius: "1rem",
           }}
-          src={image}
+          src={imageUrl}
           alt="Screenshot of website"
         />
       </div>

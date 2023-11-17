@@ -2,6 +2,8 @@ import { eventTrigger, isTriggerError } from "@trigger.dev/sdk";
 import { client, openai } from "@/trigger";
 import { z } from "zod";
 import { load } from "cheerio";
+import { voices } from "@/app/constants";
+import { Voice } from "@/app/types";
 
 const MAX_HEADING_LENGTH = 200;
 const MAX_HEADING_COUNT = 20;
@@ -88,10 +90,12 @@ client.defineJob({
         state: "success",
       });
 
+      const style = voices[voice as Voice].value;
+
       const prefix = `
 You're a copywriting pro.
 You'll remix the following landing page headings ${
-        voice ? "in the style of " + voice : "to be more useful"
+        style ? "in the style of " + style : "to be more useful"
       }!
 Keep headings roughly the same length.
 Keep headings in the same order.
@@ -135,7 +139,7 @@ Return the new copy directly, without formatting nor prose.
       });
 
       const finalScreenshotStatus = await io.createStatus("remix", {
-        label: "Preparing trashy image",
+        label: "Preparing trashed site",
         state: "loading",
       });
 

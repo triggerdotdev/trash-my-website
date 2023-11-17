@@ -1,41 +1,42 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
 
-import React, { useCallback, useEffect, useMemo, useState } from "react";
-import Input from "./Input";
-import { cn, copyToClipboard, validateUrl } from "@/app/utils";
-import { callTrigger } from "../actions";
-import { Button } from "./Button";
-import { useEventRunStatuses } from "@trigger.dev/react";
-import { Slider } from "./Slider";
-import { v4 as uuid } from "uuid";
-import { Message, Voice } from "@/app/types";
 import { voices } from "@/app/constants";
+import { Voice } from "@/app/types";
+import { cn, copyToClipboard, validateUrl } from "@/app/utils";
 import {
   CheckIcon,
   Cross1Icon,
   Link2Icon,
   ReloadIcon,
 } from "@radix-ui/react-icons";
-import { useRouter } from "next/navigation";
-import { toast } from "sonner";
+import { useEventRunStatuses } from "@trigger.dev/react";
 import { motion } from "framer-motion";
-import { set } from "zod";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { toast } from "sonner";
+import { v4 as uuid } from "uuid";
+import { callTrigger } from "../actions";
+import { Button } from "./Button";
+import Input from "./Input";
+import { Slider } from "./Slider";
 
 type Props = {
-  url?: string;
-  voice?: Voice;
+  existingResult?: {
+    url?: string;
+    voice?: Voice;
+    remixedImageUrl?: string;
+  };
 };
 
-function Dashboard({ url, voice }: Props) {
-  const router = useRouter();
-
+function Dashboard({ existingResult }: Props) {
   const [progress, setProgress] = useState(0);
-  const [pageUrl, setPageUrl] = useState(url || "");
+  const [pageUrl, setPageUrl] = useState(existingResult?.url || "");
   const [eventId, setEventId] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [selectedVoice, setSelectedVoice] = useState<Voice>(voice || "pirate");
+  const [selectedVoice, setSelectedVoice] = useState<Voice>(
+    existingResult?.voice || "pirate"
+  );
 
   const { statuses, run } = useEventRunStatuses(eventId);
 
@@ -45,36 +46,20 @@ function Dashboard({ url, voice }: Props) {
     ?.url as string | undefined;
 
   // Allow screenshot URL to be passed from search params
-  const remixedUrl = useMemo<string>(() => {
-    if (url) {
-      const parsedUrl = validateUrl(url);
-      if (parsedUrl) {
-        const siteName = new URL(parsedUrl)
-          .toString()
-          .replace(/https:\/\//g, "")
-          .replace(/\.|\//g, "");
-        const fileName = `${siteName}-${
-          voice ? voices[voice].value : "index"
-        }.jpeg`;
-        const fileUrl = `${process.env.NEXT_PUBLIC_BUCKET_URL}/${fileName}`;
-        return fileUrl;
-      }
+  const remixedUrl = useMemo<string | undefined>(() => {
+    if (!loading && existingResult?.remixedImageUrl) {
+      setProgress(1);
+      return existingResult.remixedImageUrl;
     }
 
     const remixedUrl = statuses?.find(({ key }) => key == "remix")?.data
-      ?.url as string;
+      ?.url as string | undefined;
 
     return remixedUrl;
-  }, [statuses, voice, url]);
+  }, [existingResult?.remixedImageUrl, loading, statuses]);
 
   const submit = useCallback(async () => {
     if (!validUrl) return;
-
-    // Reset state
-    const url = new URL(window.location.href);
-    url.searchParams.delete("url");
-    url.searchParams.delete("voice");
-    router.replace(url.toString());
 
     setEventId("");
     setLoading(true);
@@ -82,12 +67,12 @@ function Dashboard({ url, voice }: Props) {
 
     const res = await callTrigger({
       url: validUrl,
-      voice: voices[selectedVoice].value,
+      voice: selectedVoice,
       id: uuid(),
     });
 
     setEventId(res.id);
-  }, [validUrl, selectedVoice, router]);
+  }, [validUrl, selectedVoice]);
 
   const messages =
     statuses?.flatMap((status) => ({
@@ -103,6 +88,12 @@ function Dashboard({ url, voice }: Props) {
   }, [pageUrl, selectedVoice]);
 
   const runInProgress = run?.status !== "SUCCESS" && run?.status !== "FAILURE";
+  const error =
+    run?.status === "FAILURE"
+      ? run?.output instanceof Error
+        ? run.output.message
+        : JSON.stringify(run.output)
+      : undefined;
 
   useEffect(() => {
     switch (run?.status) {
@@ -201,6 +192,12 @@ function Dashboard({ url, voice }: Props) {
             </div>
           </div>
         ) : null}
+
+        {error && (
+          <div className="border-midnight-800/80 border z-50 flex items-start gap-3 p-6 flex-col justify-start shadow-xl w-96 bg-midnight-950/90 rounded-lg">
+            {error}
+          </div>
+        )}
 
         <div
           className={cn(
