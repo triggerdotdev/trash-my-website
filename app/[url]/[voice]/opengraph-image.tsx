@@ -20,7 +20,7 @@ type Props = {
 export default async function Image({ params }: Props) {
   const { url, voice } = params;
 
-  const imageUrl = imageUrlFromConfig(url, voice);
+  const imageUrl = imageUrlFromConfig(decodeURIComponent(url), voice);
 
   const poppinsMedium = await fetch(
     new URL("/public/Poppins-Medium.ttf", import.meta.url)
