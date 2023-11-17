@@ -13,8 +13,8 @@ export const metadata: Metadata = {
   title: "TrashMySite.ai",
   description: "Trash your website copy with AI.",
   metadataBase: new URL(
-    process.env.VERCEL_URL
-      ? `https://${process.env.VERCEL_URL}`
+    process.env.SITE_URL
+      ? `https://${process.env.SITE_URL}`
       : `http://localhost:${process.env.PORT || 3000}`
   ),
 };
