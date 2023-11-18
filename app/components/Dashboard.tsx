@@ -132,7 +132,7 @@ function Dashboard({ existingResult }: Props) {
           initialValue={pageUrl}
           clearable
         />
-        <div className="flex flex-col justify-end sm:space-y-2 overflow-x-auto -ml-6 sm:ml-0 sm:pl-0 pl-6 pr-0 sm:min-w-fit min-w-[calc(100%_+_40px)]">
+        <div className="flex flex-col justify-end sm:space-y-2 overflow-x-auto -ml-[15px] sm:ml-0 sm:pl-0 pl-[14px] sm:min-w-fit min-w-[calc(100%_+_30px)]">
           <div className="text-dimmed text-sm hidden sm:block">
             How do you want to trash it?
           </div>
