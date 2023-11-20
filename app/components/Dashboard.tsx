@@ -22,9 +22,10 @@ type Props = {
     voice?: Voice;
     remixedImageUrl?: string;
   };
+  defaultUrl?: string;
 };
 
-function Dashboard({ existingResult }: Props) {
+function Dashboard({ existingResult, defaultUrl }: Props) {
   const [progress, setProgress] = useState(0);
   const [pageUrl, setPageUrl] = useState(existingResult?.url || "");
   const [eventId, setEventId] = useState("");
@@ -36,7 +37,7 @@ function Dashboard({ existingResult }: Props) {
 
   const { statuses, run } = useEventRunStatuses(eventId);
 
-  const validUrl = useMemo(() => validateUrl(pageUrl), [pageUrl]);
+  const validUrl = validateUrl(pageUrl);
 
   const screenshotUrl = statuses?.find(({ key }) => key == "screenshot")?.data
     ?.url as string | undefined;
@@ -128,7 +129,8 @@ function Dashboard({ existingResult }: Props) {
         <Input
           label="Enter a website URL"
           className={cn("w-full", { "!ring-green-400/60": validUrl })}
-          onChange={setPageUrl}
+          value={pageUrl}
+          setValue={setPageUrl}
           initialValue={pageUrl}
           clearable
         />
@@ -199,6 +201,55 @@ function Dashboard({ existingResult }: Props) {
             </div>
           </div>
         ) : null}
+
+        {messages.length === 0 && !remixedUrl && (
+          <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center p-6">
+            <div className="border-slate-800 border z-50 flex items-start gap-3 p-6 flex-col justify-start shadow-xl w-96 bg-slate-900 rounded-lg backdrop-blur-sm">
+              <p className="text-slate-200">
+                Enter a website URL and click generate.{" "}
+                <span className="text-slate-400">Lazy? Try one of these:</span>
+              </p>
+              <ul className="text-slate-200 list-none flex flex-col gap-2">
+                <li>
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setSelectedVoice("pirate");
+                      setPageUrl("supabase.com");
+                    }}
+                    className="text-indigo-500 hover:text-indigo-400 transition"
+                  >
+                    🏴‍☠️ supabase.com as a pirate
+                  </button>
+                </li>
+                <li>
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setSelectedVoice("boomer");
+                      setPageUrl("cal.com");
+                    }}
+                    className="text-indigo-500 hover:text-indigo-400 transition"
+                  >
+                    👴 cal.com as a boomer
+                  </button>
+                </li>
+                <li>
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setSelectedVoice("cuss");
+                      setPageUrl("linear.app");
+                    }}
+                    className="text-indigo-500 hover:text-indigo-400 transition"
+                  >
+                    🤬 linear.app with bad language
+                  </button>
+                </li>
+              </ul>
+            </div>
+          </div>
+        )}
 
         {error && (
           <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center p-4">

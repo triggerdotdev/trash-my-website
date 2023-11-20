@@ -1,7 +1,7 @@
 "use client";
 
 import { Cross2Icon } from "@radix-ui/react-icons";
-import React, { useEffect, useId, useRef, useState } from "react";
+import { useId } from "react";
 
 type Props = {
   label?: string;
@@ -9,10 +9,11 @@ type Props = {
   type?: string;
   required?: boolean;
   disabled?: boolean;
+  value: string;
   placeholder?: string;
+  setValue: (value: string) => void;
   initialValue?: string;
   clearable?: boolean;
-  onChange?: (value: string) => void;
   className?: string;
 };
 
@@ -23,24 +24,12 @@ function Input({
   required = false,
   disabled = false,
   placeholder,
-  initialValue,
+  value,
+  setValue,
   clearable = false,
-  onChange,
   className,
 }: Props) {
-  const [value, setValue] = useState(initialValue || "");
   const inputId = useId();
-
-  const inputRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    onChange?.(value);
-  }, [value]);
-
-  // Focus input on first load
-  useEffect(() => {
-    if (inputRef.current) inputRef.current.focus();
-  }, []);
 
   return (
     <div className="space-y-2 w-full group">
@@ -51,7 +40,6 @@ function Input({
       )}
       <div className="relative">
         <input
-          ref={inputRef}
           id={inputId}
           value={value}
           name={name}
