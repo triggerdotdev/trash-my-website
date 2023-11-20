@@ -1,4 +1,3 @@
-import { LogoFlat } from "@/app/components/Logo";
 import { imageUrlFromConfig } from "@/app/imageUrlFromConfig";
 import { Voice } from "@/app/types";
 import { ImageResponse } from "next/og";
