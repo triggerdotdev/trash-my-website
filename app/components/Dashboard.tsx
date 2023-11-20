@@ -260,7 +260,7 @@ function Dashboard({ existingResult }: Props) {
           ) : null}
         </div>
         {remixedUrl ? (
-          <div className="p-0 sm:p-2 bg-slate-900 rounded-lg fixed z-10 sm:bottom-[5.2rem] lg:bottom-[6.2rem] bottom-8 left-1/2 -translate-x-1/2 w-[calc(100%-4rem)] sm:w-fit">
+          <div className="p-0 sm:p-2 bg-slate-900 rounded-lg fixed z-10 sm:bottom-[5.2rem] lg:bottom-[6.2rem] bottom-16 left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] sm:w-fit">
             <Button
               size="lg"
               className="w-full"
