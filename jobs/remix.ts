@@ -90,12 +90,13 @@ client.defineJob({
       const elementText = queryFunction(element)?.text?.();
 
       if (typeof elementText === "string" && elementText.trim() !== "") {
-        headings.push(
-          elementText
-            .trim()
-            .replace(/\s+/g, " ")
-            .substring(0, MAX_HEADING_LENGTH)
-        );
+        const replaced = elementText.trim().replace(/\s+/g, " ");
+
+        //@ts-ignore
+        const chars = [...replaced];
+        const clipped = chars.slice(0, MAX_HEADING_LENGTH).join("");
+
+        headings.push(clipped);
       }
     });
     headings = headings.slice(0, MAX_HEADING_COUNT);
